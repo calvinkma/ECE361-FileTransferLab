@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 
@@ -29,8 +30,11 @@ struct sockaddr_in* get_server_addr(short port) {
     server_addr -> sin_family = AF_INET;
     server_addr -> sin_port = htons(port);
     (server_addr -> sin_addr).s_addr = htonl(INADDR_ANY);
-    server_addr -> sin_port = htons(0);
     return server_addr;
+}
+
+bool is_message_ftp(char* message) {
+    return strcmp(message, "ftp") == 0;
 }
 
 int main(int argc, char *argv[]) {
@@ -49,7 +53,7 @@ int main(int argc, char *argv[]) {
  int socket = open_udp_socket();
  struct sockaddr_in* server_addr = get_server_addr(udp_listen_port);
  bind_socket_to_port(socket, server_addr);
- printf("UDP Port Opened on Port %hi. Listening...\n", udp_listen_port);
+ printf("UDP Port Opened on Port %hi. Listening...\n", udp_listen_port); // Run `ss -tulpn | grep ':3000'` to verify if there is a udp socket on Port 3000
 
  // Listen
  int i = 0;
