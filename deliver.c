@@ -57,7 +57,8 @@ int main(int argc, char *argv[]) {
     }
 
     // Send a message 
-    sendto(socket_fd, message, strlen(message), 0, (struct sockaddr*) &server_addr, sizeof(server_addr));
+    int n_bytes_sent = sendto(socket_fd, message, strlen(message), 0, (struct sockaddr*) (&server_addr), sizeof(server_addr));
+    printf("%d bytes sent succesfully\n", n_bytes_sent);
 
     return 0;
 }
