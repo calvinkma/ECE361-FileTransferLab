@@ -47,7 +47,7 @@ struct sockaddr_in* get_server_addr(short port) {
 }
 
 bool is_message_ftp(char* message) {
-    return strcmp(message, "ftp\n") == 0; // TODO: Remove the \n when not testing with the nc commands
+    return strcmp(message, "ftp") == 0; // TODO: Remove the \n when not testing with the nc commands
 }
 
 int main(int argc, char *argv[]) {
