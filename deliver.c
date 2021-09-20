@@ -45,12 +45,9 @@ int main(int argc, char *argv[]) {
     // printf("Server address binary: %lu\n", server_addr_binary);
     // printf("Server port: %u\n", server_port);
 
-    memset(&server_addr, 0, sizeof(server_addr));
-
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(server_port);
     server_addr.sin_addr.s_addr = server_addr_binary;
-    // server_addr.sin_addr.s_addr = INADDR_ANY;
 
     // Prompt the user to enter a file name to search for
     printf("ftp ");
