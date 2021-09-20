@@ -55,15 +55,15 @@ int main(int argc, char *argv[]) {
     // Prompt the user to enter a file name to search for
     printf("ftp ");
     scanf("%s", file_name);
-    printf("Searching for file %s\n", file_name);
+    printf("Searching for file %s.\n", file_name);
 
     if (access( file_name, F_OK ) == 0) {
         // File found
-        printf("File %s found\n", file_name);
+        printf("File %s found.\n", file_name);
         strcpy(message, "ftp");
     } else {
         // File not found
-        printf("File %s not found, exiting\n", file_name);
+        printf("File %s not found, exiting.\n", file_name);
         exit(0);
     }
 
@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
 
     // Send a message
     int n_bytes_sent = sendto(socket_fd, (char *)message, strlen(message), 0, (struct sockaddr*)(&server_addr), sizeof(server_addr));
-    printf("%d bytes sent succesfully\n", n_bytes_sent);
+    printf("%d bytes sent succesfully.\n", n_bytes_sent);
 
     // Receive one message
     int n_bytes_received;
@@ -81,7 +81,15 @@ int main(int argc, char *argv[]) {
     int server_addr_size;
     n_bytes_received = recvfrom(socket_fd, buffer, MAXLINE, 0, (struct sockaddr *)(&server_addr), &server_addr_size);
     buffer[n_bytes_received] = '\0';
-    printf("Server : %s\n", buffer);
+
+    // printf("Server : %s\n", buffer);
+
+    if (strcmp(buffer, "yes") == 0) {
+        printf("A file transfer can start.\n", buffer);
+    } else {
+        printf("Did not receive yes from server, exiting.\n", buffer);
+        exit(0);
+    }
 
     return 0;
 }
