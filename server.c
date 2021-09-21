@@ -5,6 +5,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+# include "packet.h"
+
 /*
     Steps to send a UDP package from src to dest using Linux CLI:
     1. On dest side, run `hostname -I` to confirm IP address, e.g. "128.100.13.158"
@@ -65,6 +67,19 @@ int main(int argc, char *argv[]) {
     struct sockaddr_in* server_addr = get_server_addr(udp_listen_port);
     bind_socket_to_port(socket, server_addr);
     printf("UDP Port Opened on Port %hi. Listening...\n", udp_listen_port); // Run `ss -tulpn | grep ':3000'` to verify if there is a udp socket on Port 3000
+
+    /*
+    === Test Code Start === "3:2:10:foobar.txt:lo World!\n"
+    */
+
+    char a[23] = {'3', ':', '2', ':', '1', '0', ':', 'f', 'o', 'o', 'b', 'a', 'r', '.', 't', 'x', 't', ':', ' ', 'W', 'o', 'r', '\n'};
+    packet* p = decode_char_array(a, 23);
+    printf("asdf %d %d %d\n", p->total_frag, p->frag_no, p->size);
+
+    /*
+    === Test Code End ===
+    */
+
 
     // Receive one message
     while (1) {
