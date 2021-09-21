@@ -67,24 +67,25 @@ int main(int argc, char *argv[]) {
     printf("UDP Port Opened on Port %hi. Listening...\n", udp_listen_port); // Run `ss -tulpn | grep ':3000'` to verify if there is a udp socket on Port 3000
 
     // Receive one message
-    int n_bytes_received;
-    char buffer[MAXLINE];
-    struct sockaddr_in client_addr;
-    int client_addr_size = sizeof(client_addr);
-    n_bytes_received = recvfrom(socket, buffer, MAXLINE, 0, (struct sockaddr *)(&client_addr), &client_addr_size);
-    buffer[n_bytes_received] = '\0';
-    printf("Client : %s\n", buffer);
+    while (1) {
+        int n_bytes_received;
+        char buffer[MAXLINE];
+        struct sockaddr_in client_addr;
+        int client_addr_size = sizeof(client_addr);
+        n_bytes_received = recvfrom(socket, buffer, MAXLINE, 0, (struct sockaddr *)(&client_addr), &client_addr_size);
+        buffer[n_bytes_received] = '\0';
+        printf("Client : %s\n", buffer);
 
-    // Craft reply message
-    char* message;
-    if (is_message_ftp(buffer)) {
-        message = "yes";
-    } else {
-        message = "no";
+        // Craft reply message
+        char* message;
+        if (is_message_ftp(buffer)) {
+            message = "yes";
+        } else {
+            message = "no";
     }
 
     // Send reply
     sendto(socket, message, strlen(message), 0, (struct sockaddr *)(&client_addr), client_addr_size);
-
+}
     return 0;
 }
