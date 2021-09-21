@@ -69,12 +69,12 @@ int main(int argc, char *argv[]) {
     printf("UDP Port Opened on Port %hi. Listening...\n", udp_listen_port); // Run `ss -tulpn | grep ':3000'` to verify if there is a udp socket on Port 3000
 
     /*
-    === Test Code Start === "3:2:10:foobar.txt:lo World!\n"
+    === Test Code Start === "3:2:6:foobar.txt:H Wor\n"
     */
 
-    char a[23] = {'3', ':', '2', ':', '1', '0', ':', 'f', 'o', 'o', 'b', 'a', 'r', '.', 't', 'x', 't', ':', ' ', 'W', 'o', 'r', '\n'};
+    char a[23] = {'3', ':', '2', ':', '6', ':', 'f', 'o', 'o', 'b', 'a', 'r', '.', 't', 'x', 't', ':', 'H', ' ', 'W', 'o', 'r', 'l'};
     packet* p = decode_char_array(a, 23);
-    printf("asdf %d %d %d\n", p->total_frag, p->frag_no, p->size);
+    print_packet_data(*p);
 
     /*
     === Test Code End ===

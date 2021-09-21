@@ -22,7 +22,7 @@ typedef struct packet {
             or null, if the input is invalid
 */
 packet* decode_char_array(char* arr, int len) {
-    packet* p = (packet *) malloc (sizeof(packet));
+    packet* p = (packet *) malloc(sizeof(packet));
     int delimiter_indexes[4] = {0, 0, 0, 0};
     int current_delimiter_count = 0;
 
@@ -36,15 +36,21 @@ packet* decode_char_array(char* arr, int len) {
         }
     }
 
-    for (int j = 0; j < 4; j++) {
-        printf("%d\n", delimiter_indexes[j]);
-    }
-
     p -> total_frag = atoi(arr);
     p -> frag_no = atoi(arr + sizeof(char) * delimiter_indexes[0] + sizeof(char));
     p -> size = atoi(arr + sizeof(char) * delimiter_indexes[1] + sizeof(char));
-    // TODO: Use delimiter_indexes[2] and delimiter_indexes[3] to figure out file name length
-    // TODO: then use mempy to obtain the filename
+
+    int n_filename_chars = delimiter_indexes[3] - delimiter_indexes[2] - 1;
+    p -> filename = (char *) malloc(sizeof(char) * (n_filename_chars + 1));
+    (p -> filename)[n_filename_chars] = '\0';
+    memcpy(p -> filename, arr + sizeof(char) * delimiter_indexes[2] + sizeof(char), n_filename_chars);
+
+    memcpy(p -> filedata, arr + sizeof(char) * delimiter_indexes[3] + sizeof(char), len - delimiter_indexes[3] - 1);
     
     return p;
+}
+
+void print_packet_data(packet p) {
+    printf("Packet %d out of %d of file '%s', containing %d bytes of data '%s'.\n",
+        p.frag_no, p.total_frag, p.filename, p.size, p.filedata);
 }
