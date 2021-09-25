@@ -68,19 +68,6 @@ int main(int argc, char *argv[]) {
     bind_socket_to_port(socket, server_addr);
     printf("UDP Port Opened on Port %hi. Listening...\n", udp_listen_port); // Run `ss -tulpn | grep ':3000'` to verify if there is a udp socket on Port 3000
 
-    /*
-    === Test Code Start === "3:2:6:foobar.txt:H Wor\n"
-    */
-
-    char a[23] = {'3', ':', '2', ':', '6', ':', 'f', 'o', 'o', 'b', 'a', 'r', '.', 't', 'x', 't', ':', 'H', ' ', 'W', 'o', 'r', 'l'};
-    packet* p = decode_char_array(a, 23);
-    print_packet_data(*p);
-
-    /*
-    === Test Code End ===
-    */
-
-
     // Receive one message
     while (1) {
         int n_bytes_received;
@@ -89,7 +76,7 @@ int main(int argc, char *argv[]) {
         int client_addr_size = sizeof(client_addr);
         n_bytes_received = recvfrom(socket, buffer, MAXLINE, 0, (struct sockaddr *)(&client_addr), &client_addr_size);
         buffer[n_bytes_received] = '\0';
-        printf("Client : %s\n", buffer);
+        print_byte_array(buffer, n_bytes_received);
 
         // Craft reply message
         char* message;
