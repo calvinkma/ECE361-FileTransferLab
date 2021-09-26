@@ -19,6 +19,7 @@
 
 
 #define MAXLINE 1024 // The maximum number of bytes that can be received from one UDP packet
+#define N_FILENAME_PREPEND_CHARS 7
 
 bool is_input_valid(int argc, char *argv[]) {
     return argc == 2; // Must be supplied exactly 1 argument
@@ -52,6 +53,11 @@ bool is_message_ftp(char* message) {
     return strcmp(message, "ftp") == 0; // TODO: Remove the \n when not testing with the nc commands
 }
 
+void reset_filename_buffer(char* filename) {
+    filename = memset(filename, 0, MAXLINE);
+    strcpy(filename, "server-"); // To ensure server file differs from client file! 7 chars prepended!
+}
+
 int main(int argc, char *argv[]) {
     // Check input
     if (!is_input_valid(argc, argv)) {
@@ -68,26 +74,55 @@ int main(int argc, char *argv[]) {
     bind_socket_to_port(socket, server_addr);
     printf("UDP Port Opened on Port %hi. Listening...\n", udp_listen_port); // Run `ss -tulpn | grep ':3000'` to verify if there is a udp socket on Port 3000
 
-    // Receive one message
+    FILE* file = NULL;
+    char filename[MAXLINE];
+    reset_filename_buffer(filename);
     while (1) {
+        // Receive one message
         int n_bytes_received;
+        int expected_packet_index;
         char buffer[MAXLINE];
         struct sockaddr_in client_addr;
+        packet* p = NULL;
         int client_addr_size = sizeof(client_addr);
         n_bytes_received = recvfrom(socket, buffer, MAXLINE, 0, (struct sockaddr *)(&client_addr), &client_addr_size);
-        buffer[n_bytes_received] = '\0';
-        print_byte_array(buffer, n_bytes_received);
+        p = decode_char_array(buffer, n_bytes_received);
 
-        // Craft reply message
-        char* message;
-        if (is_message_ftp(buffer)) {
-            message = "yes";
+        // Process packet
+        // If filenames don't match, this is a new file!
+        if (strcmp(p -> filename, &(filename[N_FILENAME_PREPEND_CHARS])) != 0) {
+            expected_packet_index = 0;
+            reset_filename_buffer(filename);
+            strcpy(&filename[N_FILENAME_PREPEND_CHARS], p -> filename);
+        }
+
+        // Open the file
+        file = fopen(filename, "a");
+        if (file == NULL) {
+            printf("IOError: Unable to create / write to file %s.\n", filename);
+            exit(EXIT_FAILURE);
+        }
+
+        // Only process the packet if the packet index matches expectation
+        if (p -> frag_no == expected_packet_index) {
+            // Process the packet
+            expected_packet_index ++;
+            printf("Received %d / %d packet of file %s, with byte content: ", (p -> frag_no) + 1, p -> total_frag, filename);
+            print_byte_array(buffer, n_bytes_received);
+
+            // Write to file
+            fwrite(p -> filedata, sizeof(char), p -> size, file);
+
+            // Send ACK
+            sendto(socket, "ACK", 3, 0, (struct sockaddr *)(&client_addr), client_addr_size);
         } else {
-            message = "no";
+            printf("Received a packet with unexpected index.\n  Discarded: ");
+            print_packet_data(*p);
+        }
+
+        // Close the file
+        fclose(file);
     }
 
-    // Send reply
-    sendto(socket, message, strlen(message), 0, (struct sockaddr *)(&client_addr), client_addr_size);
-}
     return 0;
 }
