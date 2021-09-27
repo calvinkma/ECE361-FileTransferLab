@@ -107,8 +107,8 @@ int main(int argc, char *argv[]) {
         if (p -> frag_no == expected_packet_index) {
             // Process the packet
             expected_packet_index ++;
-            printf("Received %d / %d packet of file %s, with byte content: ", (p -> frag_no), p -> total_frag, filename);
-            print_byte_array(buffer, n_bytes_received);
+            print_packet_data(*p);
+            print_byte_array(p -> filedata, p -> size);
 
             // Write to file
             fwrite(p -> filedata, sizeof(char), p -> size, file);

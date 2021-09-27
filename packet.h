@@ -51,8 +51,8 @@ packet* decode_char_array(char* arr, int len) {
 }
 
 void print_packet_data(packet p) {
-    printf("Packet %d out of %d of file '%s', containing %d bytes of data '%s'.\n",
-        p.frag_no, p.total_frag, p.filename, p.size, p.filedata);
+    printf("Packet %d out of %d of file '%s', containing %d bytes of data.\n",
+        p.frag_no, p.total_frag, p.filename, p.size);
 }
 
 void print_byte_array(char* arr, int length) {
