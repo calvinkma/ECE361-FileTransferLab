@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
         // Process packet
         // If filenames don't match, this is a new file!
         if (strcmp(p -> filename, &(filename[N_FILENAME_PREPEND_CHARS])) != 0) {
-            expected_packet_index = 0;
+            expected_packet_index = 1;
             reset_filename_buffer(filename);
             strcpy(&filename[N_FILENAME_PREPEND_CHARS], p -> filename);
         }
@@ -107,7 +107,7 @@ int main(int argc, char *argv[]) {
         if (p -> frag_no == expected_packet_index) {
             // Process the packet
             expected_packet_index ++;
-            printf("Received %d / %d packet of file %s, with byte content: ", (p -> frag_no) + 1, p -> total_frag, filename);
+            printf("Received %d / %d packet of file %s, with byte content: ", (p -> frag_no), p -> total_frag, filename);
             print_byte_array(buffer, n_bytes_received);
 
             // Write to file
