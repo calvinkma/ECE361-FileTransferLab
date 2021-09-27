@@ -113,6 +113,18 @@ int main(int argc, char *argv[]) {
         fgets(&message[non_data_len], data_size, (FILE*)fp);
         printf("Packet: %s\n", message);
 
+        // == DEBUG: @JERRY LOOK HERE ===
+        printf("Binary data sent (in hex): ");
+        for (int i = 0; i < non_data_len + data_size; i++) {
+            printf("%hhx ", message[i]);
+        }
+        printf("\nBinary data sent (in char): ");
+        for (int i = 0; i < non_data_len + data_size; i++) {
+            printf("%c", message[i]);
+        }
+        printf("\n");
+        // == DEBUG END ===
+
         // Send a message
         int n_bytes_sent = sendto(socket_fd, (char *)message, non_data_len + data_size, 0, (struct sockaddr*)(&server_addr), sizeof(server_addr));
         printf("%d bytes sent succesfully.\n", n_bytes_sent);
