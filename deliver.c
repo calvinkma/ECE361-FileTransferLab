@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
 
         non_data_len = strlen(message);
         printf("Data start index: %d\n", non_data_len);
-        fgets(&message[non_data_len], data_size, (FILE*)fp);
+        fread(&message[non_data_len], 1, data_size, (FILE*)fp);
         printf("Packet: %s\n", message);
 
         // == DEBUG: @JERRY LOOK HERE ===
@@ -118,6 +118,8 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < non_data_len + data_size; i++) {
             printf("%hhx ", message[i]);
         }
+        printf("\nNon-data length: %d", non_data_len);
+        printf("\nData size: %d", data_size);
         printf("\nBinary data sent (in char): ");
         for (int i = 0; i < non_data_len + data_size; i++) {
             printf("%c", message[i]);
