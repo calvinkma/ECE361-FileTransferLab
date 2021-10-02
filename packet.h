@@ -28,7 +28,7 @@ packet* decode_char_array(char* arr, int len) {
 
     for (int i = 0; i < len; i++) {
         if (current_delimiter_count > 4) {
-            return NULL;
+            break;
         }
         if (arr[i] == ':') {
             delimiter_indexes[current_delimiter_count] = i;
