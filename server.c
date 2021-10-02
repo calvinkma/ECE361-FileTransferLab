@@ -90,14 +90,21 @@ int main(int argc, char *argv[]) {
 
         // Process packet
         // If filenames don't match, this is a new file!
-        if (strcmp(p -> filename, &(filename[N_FILENAME_PREPEND_CHARS])) != 0) {
-            expected_packet_index = 1;
+        bool is_new_file = (strcmp(p -> filename, &(filename[N_FILENAME_PREPEND_CHARS])) != 0);
+        if (is_new_file) {
             reset_filename_buffer(filename);
             strcpy(&filename[N_FILENAME_PREPEND_CHARS], p -> filename);
         }
 
-        // Open the file
-        file = fopen(filename, "a");
+        // Set fragment number expectation, open the file
+        bool is_first_packet = (p -> frag_no == 1);
+        if (is_new_file || is_first_packet) {
+            expected_packet_index = 1;
+            file = fopen(filename, "w");
+        } else {
+            file = fopen(filename, "a");
+        }
+
         if (file == NULL) {
             printf("IOError: Unable to create / write to file %s.\n", filename);
             exit(EXIT_FAILURE);
