@@ -109,23 +109,9 @@ int main(int argc, char *argv[]) {
         strcat(message, ":");
 
         non_data_len = strlen(message);
-        printf("Data start index: %d\n", non_data_len);
+        // printf("Data start index: %d\n", non_data_len);
         fread(&message[non_data_len], 1, data_size, (FILE*)fp);
-        printf("Packet: %s\n", message);
-
-        // == DEBUG: @JERRY LOOK HERE ===
-        printf("Binary data sent (in hex): ");
-        for (int i = 0; i < non_data_len + data_size; i++) {
-            printf("%hhx ", message[i]);
-        }
-        printf("\nNon-data length: %d", non_data_len);
-        printf("\nData size: %d", data_size);
-        printf("\nBinary data sent (in char): ");
-        for (int i = 0; i < non_data_len + data_size; i++) {
-            printf("%c", message[i]);
-        }
-        printf("\n");
-        // == DEBUG END ===
+        // printf("Packet: %s\n", message);
 
         // Send a message
         int n_bytes_sent = sendto(socket_fd, (char *)message, non_data_len + data_size, 0, (struct sockaddr*)(&server_addr), sizeof(server_addr));

@@ -108,7 +108,7 @@ int main(int argc, char *argv[]) {
             // Process the packet
             expected_packet_index ++;
             print_packet_data(*p);
-            print_byte_array(p -> filedata, p -> size);
+            // print_byte_array(p -> filedata, p -> size);
 
             // Write to file
             fwrite(p -> filedata, sizeof(char), p -> size, file);
