@@ -59,5 +59,5 @@ void print_byte_array(char* arr, int length) {
     for (int i = 0; i < length; i++) {
         printf("%c", arr[i]);
     }
-    printf("\n");
+    //printf("\n");
 }

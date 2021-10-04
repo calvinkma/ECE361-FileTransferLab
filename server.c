@@ -18,7 +18,7 @@
 */
 
 
-#define MAXLINE 1024 // The maximum number of bytes that can be received from one UDP packet
+#define MAXLINE 2048 // The maximum number of bytes that can be received from one UDP packet
 #define N_FILENAME_PREPEND_CHARS 7
 
 bool is_input_valid(int argc, char *argv[]) {
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
     int socket = open_udp_socket();
     struct sockaddr_in* server_addr = get_server_addr(udp_listen_port);
     bind_socket_to_port(socket, server_addr);
-    printf("UDP Port Opened on Port %hi. Listening...\n", udp_listen_port); // Run `ss -tulpn | grep ':3000'` to verify if there is a udp socket on Port 3000
+    //printf("UDP Port Opened on Port %hi. Listening...\n", udp_listen_port); // Run `ss -tulpn | grep ':3000'` to verify if there is a udp socket on Port 3000
 
     FILE* file = NULL;
     char filename[MAXLINE];
