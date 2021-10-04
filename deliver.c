@@ -82,13 +82,13 @@ int main(int argc, char *argv[]) {
     unsigned int non_data_len;
     unsigned int data_size;
     for (frag_no = 1; frag_no <= total_frag; frag_no++) {
-        // printf("Total frags: %u\n", total_frag);
+        printf("Total frags: %u\n", total_frag);
         sprintf(total_frag_str, "%u", total_frag);
         strcpy(message, total_frag_str);
         strcat(message, ":");
         // printf("Packet: %s\n", message);
 
-        // printf("Frag no: %u\n", frag_no);
+        printf("Frag no: %u\n", frag_no);
         sprintf(frag_no_str, "%u", frag_no);
         strcat(message, frag_no_str);
         strcat(message, ":");
@@ -111,7 +111,13 @@ int main(int argc, char *argv[]) {
         non_data_len = strlen(message);
         // printf("Data start index: %d\n", non_data_len);
         fread(&message[non_data_len], 1, data_size, (FILE*)fp);
-        // printf("Packet: %s\n", message);
+        printf("Packet: ");
+	int i = 0;
+	for (i = 0; i < non_data_len + data_size; i++) {
+	    // printf("%d", i);
+	    printf("%c", message[i]);
+	}
+	printf("\n");
 
         // Send a message
         int n_bytes_sent = sendto(socket_fd, (char *)message, non_data_len + data_size, 0, (struct sockaddr*)(&server_addr), sizeof(server_addr));
