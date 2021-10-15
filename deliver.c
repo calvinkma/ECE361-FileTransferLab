@@ -132,6 +132,10 @@ int main(int argc, char *argv[]) {
 
         // printf("Server : %s\n", buffer);
 
+        /* === @JERRY: HACK INSERTED HERE: START === */
+        buffer[3] = '\0';
+        /* === @JERRY: HACK INSERTED HERE: END === */
+
         if (strcmp(buffer, "ACK") == 0) {
             printf("Recieved ACK from server.\n", buffer);
         } else {

@@ -20,6 +20,7 @@
 
 #define MAXLINE 2048 // The maximum number of bytes that can be received from one UDP packet
 #define N_FILENAME_PREPEND_CHARS 7
+#define PACKET_DROP_RATE 0.1
 
 bool is_input_valid(int argc, char *argv[]) {
     return argc == 2; // Must be supplied exactly 1 argument
@@ -88,6 +89,13 @@ int main(int argc, char *argv[]) {
         n_bytes_received = recvfrom(socket, buffer, MAXLINE, 0, (struct sockaddr *)(&client_addr), &client_addr_size);
         p = decode_char_array(buffer, n_bytes_received);
 
+        // Simulate packet drop
+        bool should_drop_packet = (((double)rand() / (double)RAND_MAX) < PACKET_DROP_RATE);
+        if (should_drop_packet) {
+            printf("Packet drop encountered.\n");
+            continue;
+        }
+
         // Process packet
         // If filenames don't match, this is a new file!
         bool is_new_file = (strcmp(p -> filename, &(filename[N_FILENAME_PREPEND_CHARS])) != 0);
@@ -119,13 +127,16 @@ int main(int argc, char *argv[]) {
 
             // Write to file
             fwrite(p -> filedata, sizeof(char), p -> size, file);
-
-            // Send ACK
-            sendto(socket, "ACK", 3, 0, (struct sockaddr *)(&client_addr), client_addr_size);
         } else {
             printf("Received a packet with unexpected index.\n  Discarded: ");
             print_packet_data(*p);
         }
+
+        // Send ACK
+        char ack_msg[MAXLINE];
+        sprintf(ack_msg, "ACK:%d", expected_packet_index);
+        printf("Reply to the packet with %s.\n", ack_msg);
+        sendto(socket, ack_msg, strlen(ack_msg), 0, (struct sockaddr *)(&client_addr), client_addr_size);
 
         // Close the file
         fclose(file);
