@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
 
         // Send a message
         int n_bytes_sent = sendto(socket_fd, (char *)message, non_data_len + data_size, 0, (struct sockaddr*)(&server_addr), sizeof(server_addr));
-        printf("%d bytes sent succesfully.\n", n_bytes_sent);
+        printf("%d bytes sent.\n", n_bytes_sent);
 
         // Set timeout
         struct timeval timeout;      
@@ -142,7 +142,7 @@ int main(int argc, char *argv[]) {
         // If timeout, resend packet
         while (n_bytes_received == -1) {
             int n_bytes_sent = sendto(socket_fd, (char *)message, non_data_len + data_size, 0, (struct sockaddr*)(&server_addr), sizeof(server_addr));
-            printf("%d bytes sent succesfully.\n", n_bytes_sent);
+            printf("No ACK received from server, %d bytes retransmitted.\n", n_bytes_sent);
             n_bytes_received = recvfrom(socket_fd, buffer, MAXLINE, 0, (struct sockaddr *)(&server_addr), &server_addr_size);
         }
         buffer[n_bytes_received] = '\0';
