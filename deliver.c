@@ -112,22 +112,39 @@ int main(int argc, char *argv[]) {
         // printf("Data start index: %d\n", non_data_len);
         fread(&message[non_data_len], 1, data_size, (FILE*)fp);
         printf("Packet: ");
-	int i = 0;
-	for (i = 0; i < non_data_len + data_size; i++) {
-	    // printf("%d", i);
-	    printf("%c", message[i]);
-	}
-	printf("\n");
+        int i = 0;
+        for (i = 0; i < non_data_len + data_size; i++) {
+            // printf("%d", i);
+            printf("%c", message[i]);
+        }
+        printf("\n");
 
         // Send a message
         int n_bytes_sent = sendto(socket_fd, (char *)message, non_data_len + data_size, 0, (struct sockaddr*)(&server_addr), sizeof(server_addr));
         printf("%d bytes sent succesfully.\n", n_bytes_sent);
+
+        // Set timeout
+        struct timeval timeout;      
+        timeout.tv_sec = 0;
+        timeout.tv_usec = 200;
+
+        if (setsockopt (socket_fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof timeout) < 0) {
+            printf("setsockopt failed\n");
+            exit(EXIT_FAILURE);
+        }
 
         // Receive one message
         int n_bytes_received;
         char buffer[MAXLINE];
         int server_addr_size;
         n_bytes_received = recvfrom(socket_fd, buffer, MAXLINE, 0, (struct sockaddr *)(&server_addr), &server_addr_size);
+        
+        // If timeout, resend packet
+        while (n_bytes_received == -1) {
+            int n_bytes_sent = sendto(socket_fd, (char *)message, non_data_len + data_size, 0, (struct sockaddr*)(&server_addr), sizeof(server_addr));
+            printf("%d bytes sent succesfully.\n", n_bytes_sent);
+            n_bytes_received = recvfrom(socket_fd, buffer, MAXLINE, 0, (struct sockaddr *)(&server_addr), &server_addr_size);
+        }
         buffer[n_bytes_received] = '\0';
 
         // printf("Server : %s\n", buffer);
